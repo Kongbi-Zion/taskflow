@@ -28,6 +28,10 @@ TaskFlow is a task management web application that allows users to create and ma
 
 ## Installation & Setup
 
+### Email Configuration
+
+- If using Gmail for sending emails, generate an [App-Specific Password](https://support.google.com/accounts/answer/185833) and use it as the email password in your environment variables.
+
 ### Prerequisites
 
 - Docker & Docker Compose installed
@@ -142,6 +146,10 @@ TaskFlow is a task management web application that allows users to create and ma
 
 ## Planned Features
 
+### Frontend Testing
+
+- I planned to test the frontend using Jest and create snapshots to ensure UI consistency.
+
 ### Task Status Filtering
 
 - I planned to add a variable to hold the status of the tasks, which could be `todo`, `completed`, or `in-progress`, to allow filtering tasks more efficiently.
@@ -154,7 +162,3 @@ TaskFlow is a task management web application that allows users to create and ma
   - The goal was to fully protect routes based on user authentication and authorization.
 - **React Query:**
   - I initially planned to use React Query to handle static props data on authentication pages using `React.memo`, but opted for Context API instead. I also planned to create an `assets` folder to store all SVG files for better organization. for fetching and managing tasks but opted for Context API instead. I plan to integrate React SQL in the future.
-
----
-
-This documentation provides a detailed guide for setting up, using, and deploying the TaskFlow application. Let me know if you need any more modifications or additions!
