@@ -30,7 +30,7 @@ TaskFlow is a task management web application that allows users to create and ma
 
 ### Email Configuration
 
-- If using Gmail for sending emails, generate an [App-Specific Password](https://support.google.com/accounts/answer/185833) and use it as the email password in your environment variables.
+- If using Gmail for sending emails, generate an [App-Specific Password](https://www.nodemailer.com/usage/using-gmail) and use it as the email password in your environment variables.
 
 ### Prerequisites
 
