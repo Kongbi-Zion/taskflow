@@ -7,7 +7,7 @@ servers:
   - url: "http://localhost:5000/api"
     description: Local Development Server
 paths:
-  /users:
+  /api/users:
     get:
       summary: Get all users
       tags: [Users]
@@ -23,7 +23,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /auth/signup:
+  /api/auth/signup:
     post:
       summary: User sign-up
       tags: [Authentication]
@@ -42,7 +42,7 @@ paths:
         "500":
           description: Registration failed
 
-  /auth/signin:
+  /api/auth/signin:
     post:
       summary: User sign-in
       tags: [Authentication]
@@ -65,7 +65,7 @@ paths:
         "500":
           description: Login failed
 
-  /auth/forgot-password:
+  /api/auth/forgot-password:
     post:
       summary: Send reset code to user's email
       tags: [Authentication]
@@ -88,7 +88,7 @@ paths:
         "500":
           description: Error sending reset code
 
-  /auth/reset-password:
+  /api/auth/reset-password:
     post:
       summary: Reset user password
       tags: [Authentication]
@@ -107,7 +107,7 @@ paths:
         "500":
           description: Password reset failed
 
-  /projects/user/{userId}:
+  /api/projects/user/{userId}:
     get:
       summary: "Get projects by user"
       description: "Retrieve projects created by or assigned to a specific user."
@@ -154,7 +154,7 @@ paths:
                   error:
                     type: object
 
-  /projects:
+  /api/projects:
     post:
       summary: Create a new project
       tags: [Projects]
@@ -171,7 +171,7 @@ paths:
         "500":
           description: Error creating project
 
-  /projects/{id}:
+  /api/projects/{id}:
     put:
       summary: Update an existing project
       tags: [Projects]
@@ -215,7 +215,7 @@ paths:
         "500":
           description: Error deleting project
 
-  /tasks/{userId}:
+  /api/tasks/{userId}:
     get:
       summary: Get all tasks for a user
       tags: [Tasks]
@@ -240,7 +240,7 @@ paths:
         "500":
           description: Error retrieving tasks
 
-  /tasks/today/{userId}:
+  /api/tasks/today/{userId}:
     get:
       summary: Get tasks due today for a user
       tags: [Tasks]
@@ -257,7 +257,7 @@ paths:
         "500":
           description: Error retrieving today's tasks
 
-  /tasks/tomorrow/{userId}:
+  /api/tasks/tomorrow/{userId}:
     get:
       summary: Get tasks due tomorrow for a user
       tags: [Tasks]
@@ -274,7 +274,7 @@ paths:
         "500":
           description: Error retrieving tomorrow's tasks
 
-  /tasks/upcoming/{userId}:
+  /api/tasks/upcoming/{userId}:
     get:
       summary: Get upcoming tasks for a user
       tags: [Tasks]
@@ -291,7 +291,7 @@ paths:
         "500":
           description: Error retrieving upcoming tasks
 
-  /tasks/project/{projectId}:
+  /api/tasks/project/{projectId}:
     get:
       summary: Get tasks by project ID
       tags: [Tasks]
@@ -310,7 +310,7 @@ paths:
         "500":
           description: Error retrieving tasks
 
-  /tasks:
+  /api/tasks/create:
     post:
       summary: Create a new task
       tags: [Tasks]
@@ -327,7 +327,7 @@ paths:
         "500":
           description: Error creating task
 
-  /tasks/{id}:
+  /api/tasks/{id}:
     put:
       summary: Update a task
       tags: [Tasks]
