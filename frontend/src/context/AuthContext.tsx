@@ -11,7 +11,7 @@ import LazyLoader from "../components/ui/lazyloader";
 import { useRouter } from "next/navigation";
 
 interface User {
-  id: string;
+  id?: string;
   token?: string | undefined;
   username: string;
   email: string;

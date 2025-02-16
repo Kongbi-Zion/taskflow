@@ -1,26 +1,49 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { FormFields } from "@/lib/types";
 import DefaultLoader from "./loader";
 import { useTasks } from "@/context/TaskContext";
 import { useAuth } from "@/context/AuthContext";
+import { Task as taskType } from "@/lib/types/index";
+import DeleteModal from "./deleteTask";
 interface NewTaskProps {
   closeModal: () => void;
   edit?: boolean;
-  currentTask?: unknown;
+  currentTask?: taskType;
 }
 
-const Task: React.FC<NewTaskProps> = ({ closeModal, edit = false }) => {
-  const { createTask } = useTasks();
+const Task: React.FC<NewTaskProps> = ({
+  closeModal,
+  edit = false,
+  currentTask,
+}) => {
+  const {
+    createTask,
+    updateTask,
+    error,
+    taskSuccess,
+    resetSuccess,
+    resetError,
+  } = useTasks();
   const { user } = useAuth();
   const [formData, setFormData] = useState<FormFields>({
     title: "",
     description: "",
     dueDate: "",
+    status: "",
   });
   const [errors, setErrors] = useState<Partial<FormFields>>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      title: currentTask?.title,
+      description: currentTask?.description,
+      dueDate: currentTask?.dueDate?.slice(0, 10),
+      status: currentTask?.status,
+    });
+  }, [currentTask]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -52,11 +75,25 @@ const Task: React.FC<NewTaskProps> = ({ closeModal, edit = false }) => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      const { title, description, dueDate } = formData;
+      const { title, description, dueDate, status } = formData;
       const userId = user?.id;
       const token = user?.token;
+
       if (title && description && dueDate && userId && token) {
-        await createTask({ title, description, dueDate, userId }, token);
+        if (!edit) {
+          await createTask({ title, description, dueDate, userId }, token);
+        }
+
+        const taskId = currentTask?._id;
+        if (edit && status && taskId) {
+          await updateTask(token, taskId, {
+            title,
+            description,
+            dueDate,
+            userId,
+            status,
+          });
+        }
       }
     }
 
@@ -67,11 +104,24 @@ const Task: React.FC<NewTaskProps> = ({ closeModal, edit = false }) => {
     <div className="fixed inset-0 bg-gray-500 bg-opacity-70 flex justify-center items-center px-4">
       <div className="bg-secondry-background dark:bg-secondry-background-dark p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-7">
-          <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">
-            {edit ? "Edit Task" : "New Task"}
-          </h2>{" "}
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">
+              {edit ? "Edit Task" : "New Task"}
+            </h2>{" "}
+            {edit && (
+              <DeleteModal
+                token={user?.token}
+                userId={user?.id}
+                taskId={currentTask?._id}
+              />
+            )}
+          </div>
           <button
-            onClick={() => closeModal()} // Close button
+            onClick={() => {
+              resetError();
+              resetSuccess();
+              closeModal();
+            }}
             className="text-gray-600 dark:text-gray-300"
           >
             <svg
@@ -91,6 +141,15 @@ const Task: React.FC<NewTaskProps> = ({ closeModal, edit = false }) => {
             </svg>
           </button>
         </div>
+
+        {taskSuccess && (
+          <div className="pb-1 -mt-5 font-medium text-primary-shade-500">
+            {taskSuccess}
+          </div>
+        )}
+        {error && (
+          <div className="pb-1 -mt-5 font-medium text-red-500">{error}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -142,6 +201,29 @@ const Task: React.FC<NewTaskProps> = ({ closeModal, edit = false }) => {
                 <p className="text-red-500 text-sm mt-1">{errors.dueDate}</p>
               )}
             </div>
+
+            {/* Display status select field only when editing */}
+            {edit && (
+              <div>
+                <label
+                  className="text-gray-600 dark:text-gray-300 text-sm mb-2 block"
+                  htmlFor="status"
+                >
+                  Status
+                </label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={() => handleChange}
+                  className="text-gray-800 dark:text-gray-300 bg-secondry-background dark:bg-secondry-background-dark outline-none border border-gray-400 w-full text-sm pl-4 pr-10 py-2.5 rounded-md"
+                >
+                  <option value="to-do">To Do</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            )}
 
             <div>
               <label

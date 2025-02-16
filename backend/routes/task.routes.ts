@@ -5,16 +5,7 @@ import authenticateToken from "../middleware/auth.middleware";
 const router = express.Router();
 
 // Route to get all tasks for a user
-router.get("/:userId", TaskController.getUserTasks);
-
-// Route to get tasks due today for a user
-router.get("/today/:userId", TaskController.getUsersTasksToday);
-
-// Route to get tasks due tomorrow for a user
-router.get("/tomorrow/:userId", TaskController.getUsersTasksTomorrow);
-
-// Route to get upcoming tasks (tasks due after tomorrow) for a user
-router.get("/upcoming/:userId", TaskController.getUsersUpcomingTasks);
+router.get("/:filter/:userId", authenticateToken, TaskController.getUserTasks);
 
 // Route to get tasks for a specific project
 router.get("/project/:projectId", TaskController.getTasksByProject);
@@ -23,9 +14,9 @@ router.get("/project/:projectId", TaskController.getTasksByProject);
 router.post("/create", authenticateToken, TaskController.createTask);
 
 // Route to update an existing task
-router.put("/:id", TaskController.updateTask);
+router.put("/:id", authenticateToken, TaskController.updateTask);
 
 // Route to delete a task
-router.delete("/:id", TaskController.deleteTask);
+router.delete("/:userId/:id", authenticateToken, TaskController.deleteTask);
 
 export default router;

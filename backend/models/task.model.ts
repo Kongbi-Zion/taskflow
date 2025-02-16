@@ -7,7 +7,8 @@ interface ITask {
   userId: IUser;
   users?: IUser[];
   projectId?: string;
-  dueDate?: Date;
+  dueDate: Date;
+  status: "to-do" | "in-progress" | "completed";
 }
 
 const TaskSchema = new Schema<ITask>(
@@ -17,7 +18,12 @@ const TaskSchema = new Schema<ITask>(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     users: [{ type: Schema.Types.ObjectId, ref: "User" }],
     projectId: { type: String },
-    dueDate: { type: Date },
+    dueDate: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ["to-do", "in-progress", "completed"],
+      default: "to-do",
+    },
   },
   { timestamps: true }
 );

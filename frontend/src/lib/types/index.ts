@@ -32,6 +32,7 @@ export interface FormFields {
   password?: string;
   confirmPassword?: string;
   dueDate?: string;
+  status?: string;
 }
 
 export interface User {
@@ -45,4 +46,15 @@ export interface User {
 export interface Response {
   success: boolean;
   result: unknown;
+}
+
+export interface Task {
+  _id?: string;
+  title: string;
+  description: string;
+  projectId?: string;
+  userId: string;
+  users?: string[];
+  dueDate?: string;
+  status?: string;
 }
