@@ -1,76 +1,73 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: Project Management API
-  description: API for managing users, projects, and tasks in a project management system.
+  title: TaskFlow Management API
+  description: API for managing users and tasks
   version: 1.0.0
 servers:
-  - url: "http://localhost:5000/api"
-    description: Local Development Server
+  - url: http://localhost:5000
+    description: Local server
 paths:
   /api/users:
     get:
       summary: Get all users
-      tags: [Users]
+      tags:
+        - Users
       responses:
-        "200":
-          description: A list of all users
+        200:
+          description: A list of users
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
-        "500":
-          description: Internal Server Error
+        500:
+          description: Error retrieving users
 
   /api/auth/signup:
     post:
-      summary: User sign-up
-      tags: [Authentication]
+      summary: Register a new user
+      tags:
+        - Authentication
       requestBody:
-        description: User registration data
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserSignUp"
+              $ref: "#/components/schemas/UserSignup"
       responses:
-        "201":
+        201:
           description: User registered successfully
-        "400":
+        400:
           description: Email already in use
-        "500":
+        500:
           description: Registration failed
 
   /api/auth/signin:
     post:
-      summary: User sign-in
-      tags: [Authentication]
+      summary: Login a user
+      tags:
+        - Authentication
       requestBody:
-        description: User login credentials
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserSignIn"
+              $ref: "#/components/schemas/UserLogin"
       responses:
-        "200":
+        200:
           description: Login successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Token"
-        "401":
+        401:
           description: Invalid credentials
-        "500":
+        500:
           description: Login failed
 
   /api/auth/forgot-password:
     post:
-      summary: Send reset code to user's email
-      tags: [Authentication]
+      summary: Send password reset code
+      tags:
+        - Authentication
       requestBody:
-        description: Email address for password reset
         required: true
         content:
           application/json:
@@ -79,296 +76,146 @@ paths:
               properties:
                 email:
                   type: string
-                  example: "user@example.com"
       responses:
-        "200":
-          description: Reset code sent successfully
-        "404":
+        200:
+          description: Reset code sent to email
+        404:
           description: User not found
-        "500":
+        500:
           description: Error sending reset code
 
   /api/auth/reset-password:
     post:
-      summary: Reset user password
-      tags: [Authentication]
+      summary: Reset password
+      tags:
+        - Authentication
       requestBody:
-        description: Password reset data
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PasswordReset"
+              $ref: "#/components/schemas/ResetPassword"
       responses:
-        "200":
+        200:
           description: Password reset successful
-        "400":
+        400:
           description: Invalid or expired reset code
-        "500":
+        500:
           description: Password reset failed
 
-  /api/projects/user/{userId}:
-    get:
-      summary: "Get projects by user"
-      description: "Retrieve projects created by or assigned to a specific user."
-      tags: [Projects]
-      parameters:
-        - name: "userId"
-          in: "path"
-          required: true
-          description: "User ID to retrieve projects for"
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: "Projects retrieved successfully"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  projects:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Project"
-        "404":
-          description: "No projects found for this user"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        "500":
-          description: "Error retrieving projects"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  error:
-                    type: object
-
-  /api/projects:
-    post:
-      summary: Create a new project
-      tags: [Projects]
-      requestBody:
-        description: Project creation data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Project"
-      responses:
-        "201":
-          description: Project created successfully
-        "500":
-          description: Error creating project
-
-  /api/projects/{id}:
+  /api/users/{id}:
     put:
-      summary: Update an existing project
-      tags: [Projects]
+      summary: Update a user
+      tags:
+        - Users
       parameters:
         - name: id
           in: path
           required: true
-          description: Project ID
           schema:
-            type: integer
+            type: string
       requestBody:
-        description: Updated project data
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Project"
+              type: object
+              properties:
+                username:
+                  type: string
       responses:
-        "200":
-          description: Project updated successfully
-        "404":
-          description: Project not found
-        "500":
-          description: Error updating project
+        200:
+          description: User updated successfully
+        404:
+          description: User not found
+        500:
+          description: Error updating user
 
-    delete:
-      summary: Delete a project
-      tags: [Projects]
+  /api/tasks/{filter}/{userId}:
+    get:
+      summary: Get tasks for a user
+      tags:
+        - Tasks
       parameters:
-        - name: id
+        - name: filter
           in: path
           required: true
-          description: Project ID
           schema:
-            type: integer
-      responses:
-        "200":
-          description: Project deleted successfully
-        "404":
-          description: Project not found
-        "500":
-          description: Error deleting project
-
-  /api/tasks/{userId}:
-    get:
-      summary: Get all tasks for a user
-      tags: [Tasks]
-      parameters:
+            type: string
+            enum: [all, today, tomorrow, upcoming]
         - name: userId
           in: path
           required: true
-          description: User ID
           schema:
-            type: integer
+            type: string
       responses:
-        "200":
-          description: List of tasks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Task"
-        "404":
-          description: No tasks found for this user
-        "500":
+        200:
+          description: Tasks retrieved successfully
+        404:
+          description: No tasks found
+        500:
           description: Error retrieving tasks
-
-  /api/tasks/today/{userId}:
-    get:
-      summary: Get tasks due today for a user
-      tags: [Tasks]
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Tasks due today
-        "500":
-          description: Error retrieving today's tasks
-
-  /api/tasks/tomorrow/{userId}:
-    get:
-      summary: Get tasks due tomorrow for a user
-      tags: [Tasks]
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Tasks due tomorrow
-        "500":
-          description: Error retrieving tomorrow's tasks
-
-  /api/tasks/upcoming/{userId}:
-    get:
-      summary: Get upcoming tasks for a user
-      tags: [Tasks]
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Upcoming tasks
-        "500":
-          description: Error retrieving upcoming tasks
 
   /api/tasks/project/{projectId}:
     get:
-      summary: Get tasks by project ID
-      tags: [Tasks]
+      summary: Get tasks by project
+      tags:
+        - Tasks
       parameters:
         - name: projectId
           in: path
           required: true
-          description: Project ID
           schema:
-            type: integer
+            type: string
       responses:
-        "200":
-          description: Tasks for the project
-        "404":
-          description: No tasks found for the project
-        "500":
+        200:
+          description: Tasks for the project retrieved successfully
+        404:
+          description: No tasks found
+        500:
           description: Error retrieving tasks
 
-  /api/tasks/create:
+  /api/tasks:
     post:
       summary: Create a new task
-      tags: [Tasks]
+      tags:
+        - Tasks
       requestBody:
-        description: Task creation data
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Task"
       responses:
-        "201":
+        201:
           description: Task created successfully
-        "500":
+        500:
           description: Error creating task
 
-  /api/tasks/{id}:
-    put:
-      summary: Update a task
-      tags: [Tasks]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Task ID
-          schema:
-            type: integer
-      requestBody:
-        description: Task update data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Task"
-      responses:
-        "200":
-          description: Task updated successfully
-        "404":
-          description: Task not found
-        "500":
-          description: Error updating task
-
+  /api/tasks/{userId}/{id}:
     delete:
       summary: Delete a task
-      tags: [Tasks]
+      tags:
+        - Tasks
       parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
         - name: id
           in: path
           required: true
-          description: Task ID
           schema:
-            type: integer
+            type: string
       responses:
-        "200":
+        200:
           description: Task deleted successfully
-        "404":
+        403:
+          description: Unauthorized deletion
+        404:
           description: Task not found
-        "500":
+        500:
           description: Error deleting task
 
 components:
@@ -377,34 +224,32 @@ components:
       type: object
       properties:
         id:
-          type: integer
-        name:
+          type: string
+        username:
           type: string
         email:
           type: string
-    UserSignUp:
+    UserSignup:
       type: object
+      required: [username, email, password]
       properties:
-        name:
+        username:
           type: string
-        email:
-          type: string
-        password:
-          type: string
-    UserSignIn:
-      type: object
-      properties:
         email:
           type: string
         password:
           type: string
-    Token:
+    UserLogin:
       type: object
+      required: [email, password]
       properties:
-        token:
+        email:
           type: string
-    PasswordReset:
+        password:
+          type: string
+    ResetPassword:
       type: object
+      required: [email, resetCode, newPassword]
       properties:
         email:
           type: string
@@ -412,38 +257,34 @@ components:
           type: string
         newPassword:
           type: string
-    Project:
+    Task:
       type: object
+      required: [title, userId, dueDate]
       properties:
-        id:
-          type: integer
         title:
           type: string
         description:
           type: string
         userId:
-          type: integer
+          type: string
         users:
           type: array
           items:
-            type: integer
-    Task:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
+            type: string
         dueDate:
           type: string
           format: date-time
+        status:
+          type: string
+          enum: [to-do, in-progress, completed]
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
         users:
           type: array
           items:
-            type: integer
-        projectId:
-          type: integer
-        userId:
-          type: integer
+            type: string
