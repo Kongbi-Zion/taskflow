@@ -1,18 +1,37 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import taskService from "@/lib/services/taskService";
 import { useAuth } from "./AuthContext";
 import { useParams, useRouter } from "next/navigation";
 import { Task } from "@/lib/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
+interface Item {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  task: Task;
+}
+
+interface Columns {
+  [key: string]: Item[];
+}
+
 interface TaskContextType {
   tasks: Task[];
   isLoading: boolean;
   taskSuccess: string | null;
   editTask: boolean;
-  currentTask: Task | undefined; // Current task state
+  currentTask: Task | undefined;
+  columns: Columns;
   createTask: (taskData: Task, token: string) => void;
   updateTask: (token: string, taskId: string, taskData: Partial<Task>) => void;
   deleteTask: (taskId: string, userId: string, token: string) => void;
@@ -20,9 +39,10 @@ interface TaskContextType {
   resetError: () => void;
   resetSuccess: () => void;
   resetEditTask: () => void;
-  setCurrentTask: (task: Task) => void; // Function to set current task
-  resetCurrentTask: () => void; // Function to reset current task
+  setCurrentTask: (task: Task) => void;
+  resetCurrentTask: () => void;
   setEditTask: (edit: boolean) => void;
+  setColumns: React.Dispatch<React.SetStateAction<Columns>>;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -38,7 +58,11 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch tasks using React Query
+  const [columns, setColumns] = useState<Columns>({});
+  const [taskSuccess, setTaskSuccess] = useState<string | null>(null);
+  const [editTask, setEditTask] = useState<boolean>(false);
+  const [currentTask, setCurrentTask] = useState<Task | undefined>(undefined);
+
   const {
     data: tasks = [],
     isLoading,
@@ -53,21 +77,51 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       const data = await taskService.getUserTasks(user.id, filter, user.token);
       return data.tasks;
     },
-    enabled: !!user && !!filter, // Prevent query if no user or filter
+    enabled: !!user && !!filter,
   });
 
-  // Success message state
-  const [taskSuccess, setTaskSuccess] = React.useState<string | null>(null);
+  useEffect(() => {
+    // Initialize the columns with default categories
+    const defaultCategories = ["to-do", "in-progress", "completed"];
 
-  // Edit task state
-  const [editTask, setEditTask] = React.useState<boolean>(false);
+    // Map tasks into categories based on their status
+    const categorisedTasks = tasks.reduce((acc: Columns, task: Task) => {
+      // Define the category based on task status (e.g., 'to-do', 'in-progress', 'completed')
+      const category = task.status || "to-do"; // Default to 'to-do' if no status is provided
 
-  // Current task state
-  const [currentTask, setCurrentTask] = React.useState<Task | undefined>(
-    undefined
-  );
+      // Ensure the category exists in the accumulator
+      if (!acc[category]) {
+        acc[category] = [];
+      }
 
-  // Mutation: Create Task
+      // Push the task into the respective category
+      acc[category].push({
+        id: `${task?._id}`,
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate as string,
+        task,
+      });
+
+      return acc;
+    }, {});
+
+    // Ensure all default categories exist even if no tasks are assigned to them
+    defaultCategories.forEach((category) => {
+      if (!categorisedTasks[category]) {
+        categorisedTasks[category] = [];
+      }
+    });
+
+    // Update state with categorised tasks, ensuring the order of categories remains as per defaultCategories
+    const orderedCategorisedTasks: Columns = {};
+    defaultCategories.forEach((category) => {
+      orderedCategorisedTasks[category] = categorisedTasks[category] || [];
+    });
+
+    setColumns(orderedCategorisedTasks);
+  }, [tasks]);
+
   const createTaskMutation = useMutation({
     mutationFn: async ({
       taskData,
@@ -83,7 +137,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     onError: () => setTaskSuccess("Failed to create task."),
   });
 
-  // Mutation: Update Task
   const updateTaskMutation = useMutation({
     mutationFn: async ({
       token,
@@ -101,7 +154,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     onError: () => setTaskSuccess("Failed to update task."),
   });
 
-  // Mutation: Delete Task
   const deleteTaskMutation = useMutation({
     mutationFn: async ({
       taskId,
@@ -119,11 +171,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     onError: () => setTaskSuccess("Failed to delete task."),
   });
 
-  // Reset functions
   const resetError = () => setTaskSuccess(null);
   const resetSuccess = () => setTaskSuccess(null);
   const resetEditTask = () => setEditTask(false);
-  const resetCurrentTask = () => setCurrentTask(undefined); // Reset current task to null
+  const resetCurrentTask = () => setCurrentTask(undefined);
 
   return (
     <TaskContext.Provider
@@ -133,6 +184,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         taskSuccess,
         editTask,
         currentTask,
+        columns,
         createTask: (taskData, token) =>
           createTaskMutation.mutate({ taskData, token }),
         updateTask: (token, taskId, taskData) =>
@@ -143,9 +195,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         resetError,
         resetSuccess,
         resetEditTask,
-        setCurrentTask, // Function to set the current task
-        resetCurrentTask, // Function to reset the current task
+        setCurrentTask,
+        resetCurrentTask,
         setEditTask,
+        setColumns,
       }}
     >
       {children}
@@ -153,7 +206,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   );
 };
 
-// Custom Hook to Use Task Context
 export const useTasks = (): TaskContextType => {
   const context = useContext(TaskContext);
   if (!context) {

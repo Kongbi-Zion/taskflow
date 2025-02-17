@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   DragDropContext,
   Droppable,
@@ -8,68 +8,10 @@ import {
 } from "react-beautiful-dnd";
 import { useTasks } from "@/context/TaskContext";
 import LazyLoader from "../ui/lazyloader";
-import { Task as taskType } from "@/lib/types";
-interface Item {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  task: taskType;
-}
-
-interface Columns {
-  [key: string]: Item[];
-}
 
 const ProjectComponent: React.FC = () => {
-  const { isLoading, tasks, setCurrentTask, setEditTask } = useTasks();
-  const [columns, setColumns] = useState<Columns>({});
-
-  // useEffect(() => {
-  //   getUserTasks();
-  // }, []);
-
-  useEffect(() => {
-    // Initialize the columns with default categories
-    const defaultCategories = ["to-do", "in-progress", "completed"];
-
-    // Map tasks into categories based on their status
-    const categorisedTasks = tasks.reduce((acc: Columns, task) => {
-      // Define the category based on task status (e.g., 'to-do', 'in-progress', 'completed')
-      const category = task.status || "to-do"; // Default to 'to-do' if no status is provided
-
-      // Ensure the category exists in the accumulator
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-
-      // Push the task into the respective category
-      acc[category].push({
-        id: `${task?._id}`,
-        title: task.title,
-        description: task.description,
-        dueDate: task.dueDate as string,
-        task,
-      });
-
-      return acc;
-    }, {});
-
-    // Ensure all default categories exist even if no tasks are assigned to them
-    defaultCategories.forEach((category) => {
-      if (!categorisedTasks[category]) {
-        categorisedTasks[category] = [];
-      }
-    });
-
-    // Update state with categorised tasks, ensuring the order of categories remains as per defaultCategories
-    const orderedCategorisedTasks: Columns = {};
-    defaultCategories.forEach((category) => {
-      orderedCategorisedTasks[category] = categorisedTasks[category] || [];
-    });
-
-    setColumns(orderedCategorisedTasks);
-  }, [tasks]);
+  const { isLoading, columns, setCurrentTask, setEditTask, setColumns } =
+    useTasks();
 
   const handleItemMoved = (destinationDivId: string) => {
     console.log(`Item moved to div: ${destinationDivId}`);
