@@ -8,6 +8,7 @@ import {
 } from "react-beautiful-dnd";
 import { useTasks } from "@/context/TaskContext";
 import LazyLoader from "../ui/lazyloader";
+import moment from "moment";
 
 const ProjectComponent: React.FC = () => {
   const { isLoading, columns, setCurrentTask, setEditTask, setColumns } =
@@ -42,6 +43,19 @@ const ProjectComponent: React.FC = () => {
     } else {
       handleItemMoved(destination.droppableId);
     }
+  };
+
+  const formatDueDate = (dueDate: string | null) => {
+    return dueDate
+      ? moment(dueDate).calendar(null, {
+          sameDay: "[Today]", // If the date is today
+          nextDay: "[Tomorrow]", // If the date is tomorrow
+          nextWeek: "dddd", // If the date is within the next week
+          lastDay: "[Yesterday]", // If the date was yesterday
+          lastWeek: "[Last] dddd", // If the date was last week
+          sameElse: "MMM D, YYYY", // Default format
+        })
+      : "No due date";
   };
 
   return (
@@ -87,8 +101,8 @@ const ProjectComponent: React.FC = () => {
                                         <p className="mb-0 font-sans dark:text-gray-200 font-semibold leading-normal text-sm dark:opacity-60">
                                           {item.title}
                                         </p>
-                                        <h5 className="mb-0 font-bold dark:text-white">
-                                          {item.dueDate || "No due date"}
+                                        <h5 className="mb-0 text-sm mt-1 font-bold dark:text-white">
+                                          Due: {formatDueDate(item.dueDate)}
                                         </h5>
                                       </div>
                                     </div>
