@@ -6,7 +6,6 @@
     "test": "jest",
     "start": "nodemon server.js",
     "dev": "ts-node server.ts",
-    "server": "ts-node server.ts",
     "build": "tsc"
   },
   "keywords": [],
