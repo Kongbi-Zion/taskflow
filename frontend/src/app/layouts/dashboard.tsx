@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DashboardLayoutProps } from "@/lib/types";
 import Link from "next/link";
 import AddFloatingButtonWithModal from "../../components/ui/floatingbutton";
@@ -8,12 +8,30 @@ import Task from "../../components/ui/task";
 import { usePathname } from "next/navigation";
 import NaveItems from "../../components/ui/navitmes";
 import { useTasks } from "@/context/TaskContext";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { editTask, currentTask, resetCurrentTask, resetEditTask } = useTasks();
+  const { user } = useAuth();
   const pathname = usePathname();
   const [newProject, setNewProject] = useState(false);
   const [newTask, setTask] = useState(false);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/signin");
+    } else {
+      setIsLoading(false);
+    }
+  }, [router, user]);
+
+  if (isLoading) {
+    return null;
+  }
+
   const handleNewProjectOrTask = (type: string) => {
     console.log(`${type} has been created.`);
     if (type == "New Project") {

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import Link from "next/link";
 import { AuthLayoutProps } from "@/lib/types";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({
   title,
@@ -15,6 +16,23 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   children,
 }) => {
   const { error, resetError } = useAuth();
+
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    } else {
+      setIsLoading(false);
+    }
+  }, [router, user]);
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <div className="w-full h-full bg-background dark:bg-dark-background">
       <div className="max-w-4xl flex items-center mx-auto md:h-screen p-4">
