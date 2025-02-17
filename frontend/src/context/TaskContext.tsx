@@ -74,8 +74,21 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         router.push("/signin");
         return [];
       }
-      const data = await taskService.getUserTasks(user.id, filter, user.token);
-      return data.tasks;
+
+      try {
+        const data = await taskService.getUserTasks(
+          user.id,
+          filter,
+          user.token
+        );
+        return data.tasks;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        if (err?.status === 403) {
+          router.push("/signin");
+        }
+        throw err;
+      }
     },
     enabled: !!user && !!filter,
   });

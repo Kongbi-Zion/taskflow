@@ -75,7 +75,7 @@ const ProjectComponent: React.FC = () => {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-full p-2 h-full overflow-y-auto overflow-x-hidden"
+                      className="w-full p-2 h-full overflow-y-auto"
                     >
                       <h4 className="capitalize text-lg font-bold mb-5 text-primary-shade-500 dark:text-primary-shade-700">
                         {colId}

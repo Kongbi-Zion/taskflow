@@ -51,7 +51,7 @@ const SignUpComponent: React.FC = () => {
       " Welcome to our registration page! Get started by creating your account.",
     linktext: "Already have an account?",
     link: "/signin",
-    linkText: "Sign up",
+    linkText: "Sign in",
     formlength: Object.keys(formData).length,
     children: "",
   };

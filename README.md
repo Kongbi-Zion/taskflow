@@ -23,7 +23,8 @@ TaskFlow is a task management web application that allows users to create and ma
 - **Backend:** Node.js (Express) with MongoDB (Mongoose ORM)
 - **Frontend:** Next.js with Tailwind CSS
 - **Authentication:** JWT with refresh tokens
-- **State Management:** Context API
+- **State Management:** Context API & React Query
+- **Date Handling:** Moment.js for formatting dates
 - **Deployment:** Docker & Docker Compose
 
 ## Installation & Setup
@@ -41,7 +42,7 @@ TaskFlow is a task management web application that allows users to create and ma
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/Kongbi-Zion/taskflow
    cd taskflow
    ```
 2. Create a `.env` file in both backend and frontend directories with required variables.
@@ -71,6 +72,7 @@ TaskFlow is a task management web application that allows users to create and ma
 - **MongoDB with Mongoose ORM:** Schema validation and data management.
 - **Centralized Error Handling:** Handles errors consistently across the backend.
 - **Docker Containerization:** Both frontend and backend services are dockerized for easy deployment.
+- **WebSockets:** Real-time task updates using Socket.io, allowing automatic UI updates.
 
 ### Frontend
 
@@ -78,10 +80,12 @@ TaskFlow is a task management web application that allows users to create and ma
 - **Password Reset:** Users can request a reset code and use it to change their password.
 - **Task Management:** Users can create, view, update, and delete tasks.
 - **Project Management:** Users can create and manage projects.
-- **State Management:** Context API for global state management.
+- **State Management:** Context API & React Query for global state management and optimized data fetching.
 - **Responsive UI:** Tailwind CSS for styling and responsiveness.
 - **Dark Mode:** Dark mode support for user preference.
 - **Drag & Drop:** Tasks can be reordered using `react-beautiful-dnd`.
+- **WebSockets Integration:** Real-time UI updates for task changes.
+- **Date Formatting:** Implemented with Moment.js for better readability.
 
 ## API Endpoints
 
@@ -115,7 +119,6 @@ TaskFlow is a task management web application that allows users to create and ma
 
 ## Bonus Features
 
-- **WebSockets:** Real-time task updates using Socket.io. Currently, WebSockets are set up on the backend, but I planned to use them in the frontend to automatically update states. For example, sending real-time data about tasks to the frontend as users drag tasks from one section to another.
 - **CSV/PDF Export:** Ability to export task lists to CSV or PDF.
 - **Performance Optimizations:** Lazy loading and memoization for better performance.
 
@@ -126,6 +129,7 @@ TaskFlow is a task management web application that allows users to create and ma
 - **JWT Authentication:** Secure user authentication and authorization.
 - **Refresh Tokens:** Implemented to maintain session security.
 - **Mongoose ORM:** Used for MongoDB schema validation and relationships.
+- **Moment.js:** Used for consistent date formatting and display.
 
 ## Deployment Instructions
 
@@ -148,17 +152,17 @@ TaskFlow is a task management web application that allows users to create and ma
 
 ### Frontend Testing
 
-- I planned to test the frontend using Jest and create snapshots to ensure UI consistency.
+- Testing the frontend using Jest and creating snapshots to ensure UI consistency.
 
 ### Task Status Filtering
 
-- I planned to add a variable to hold the status of the tasks, which could be `todo`, `completed`, or `in-progress`, to allow filtering tasks more efficiently.
+- Adding a status field (`todo`, `completed`, `in-progress`) to filter tasks efficiently.
 
 ### Features I Couldn't Complete:
 
 - **ESLint & Husky Setup:**
-  - I planned to set up ESLint and Husky for automatic code formatting and linting but didn't manage to complete this.
+  - Planned to set up ESLint and Husky for automatic code formatting and linting but didn't complete it.
 - **Protected Page Routes:**
-  - The goal was to fully protect routes based on user authentication and authorization.
+  - Aiming to fully protect routes based on user authentication and authorization.
 - **React Query:**
-  - I initially planned to use React Query to handle static props data on authentication pages using `React.memo`, but opted for Context API instead. I also planned to create an `assets` folder to store all SVG files for better organization. for fetching and managing tasks but opted for Context API instead. I plan to integrate React SQL in the future.
+  - Initially planned to use React Query for authentication page data fetching but opted for Context API. React Query might be integrated later for enhanced state management.
