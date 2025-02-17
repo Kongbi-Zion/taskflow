@@ -1,26 +1,23 @@
-# Dockerfile for Express.js
-
+# Use Node.js official image
 FROM --platform=linux/amd64 node:20
 
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-RUN npm install
+# Install all dependencies, including devDependencies
+RUN npm install --include=dev
 
-RUN npm install typescript
-
-# Copy the rest of your Express.js API code
+# Copy the entire project
 COPY . .
 
-# Build the
+# Run TypeScript build
 RUN npm run build
 
-
-# Expose the port the Express.js server will run on
+# Expose the port
 EXPOSE 5000
 
-# Start the Express.js server
+# Start the server from the compiled dist folder
 CMD ["node", "server.js"]
