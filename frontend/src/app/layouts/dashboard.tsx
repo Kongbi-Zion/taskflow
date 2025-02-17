@@ -7,7 +7,9 @@ import NewProject from "../../components/ui/project";
 import Task from "../../components/ui/task";
 import { usePathname } from "next/navigation";
 import NaveItems from "../../components/ui/navitmes";
+import { useTasks } from "@/context/TaskContext";
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  const { editTask, currentTask } = useTasks();
   const pathname = usePathname();
   const [newProject, setNewProject] = useState(false);
   const [newTask, setTask] = useState(false);
@@ -27,9 +29,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const projects = [
     { id: 1, title: "Project One" },
     { id: 2, title: "Project Two" },
-    { id: 3, title: "Project Three" },
-    { id: 4, title: "Project Four" },
-    { id: 5, title: "Project Five" },
   ];
 
   return (
@@ -191,7 +190,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </div>
 
       {newProject && <NewProject closeModal={handleCloseModal} />}
-      {newTask && <Task closeModal={handleCloseModal} />}
+      {(newTask || editTask) && (
+        <Task
+          edit={editTask}
+          currentTask={currentTask}
+          closeModal={handleCloseModal}
+        />
+      )}
+
       {pathname != "/profile" && (
         <AddFloatingButtonWithModal
           onCreate={handleNewProjectOrTask}

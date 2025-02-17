@@ -1,26 +1,28 @@
 "use client";
-import React, { createContext, useState, useContext, ReactNode } from "react";
+
+import React, { createContext, useContext, ReactNode } from "react";
 import taskService from "@/lib/services/taskService";
 import { useAuth } from "./AuthContext";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Task } from "@/lib/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface TaskContextType {
   tasks: Task[];
-  loading: boolean;
+  isLoading: boolean;
   taskSuccess: string | null;
-  getUserTasks: () => Promise<void>;
-  createTask: (taskData: Task, token: string) => Promise<void>;
-  updateTask: (
-    token: string,
-    taskId: string,
-    taskData: Partial<Task>
-  ) => Promise<void>;
-  deleteTask: (taskId: string, userId: string, token: string) => Promise<void>;
+  editTask: boolean;
+  currentTask: Task | undefined; // Current task state
+  createTask: (taskData: Task, token: string) => void;
+  updateTask: (token: string, taskId: string, taskData: Partial<Task>) => void;
+  deleteTask: (taskId: string, userId: string, token: string) => void;
   error: string | null;
   resetError: () => void;
   resetSuccess: () => void;
+  resetEditTask: () => void;
+  setCurrentTask: (task: Task) => void; // Function to set current task
+  resetCurrentTask: () => void; // Function to reset current task
+  setEditTask: (edit: boolean) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -33,104 +35,117 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const params = useParams();
   const router = useRouter();
   const filter = params.productId as "all" | "today" | "tomorrow" | "upcoming";
-  const { user } = useAuth(); // Get the authenticated user
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [taskSuccess, setTaskSuccess] = useState<string | null>(null); // Success message state
-
-  // Fetch tasks for the logged-in user
-  const getUserTasks = async () => {
-    try {
-      if (!user) {
-        setError(null);
-        localStorage.removeItem("user");
+  // Fetch tasks using React Query
+  const {
+    data: tasks = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["tasks", user?.id, filter],
+    queryFn: async () => {
+      if (!user || !user.id || !user.token || !filter) {
         router.push("/signin");
-        return;
+        return [];
       }
+      const data = await taskService.getUserTasks(user.id, filter, user.token);
+      return data.tasks;
+    },
+    enabled: !!user && !!filter, // Prevent query if no user or filter
+  });
 
-      setLoading(true); // Start loading
-      setError(null);
+  // Success message state
+  const [taskSuccess, setTaskSuccess] = React.useState<string | null>(null);
 
-      const { id, token } = user;
+  // Edit task state
+  const [editTask, setEditTask] = React.useState<boolean>(false);
 
-      if (id && token && filter) {
-        const data = await taskService.getUserTasks(id, filter, token);
-        setTasks(data.tasks);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error?.status === 403) {
-        setError(null);
-        localStorage.removeItem("user");
-        router.push("/signin");
-      }
-      console.error("Task fetch error:", error);
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
+  // Current task state
+  const [currentTask, setCurrentTask] = React.useState<Task | undefined>(
+    undefined
+  );
 
-  // Create a new task
-  const createTask = async (taskData: Task, token: string) => {
-    try {
-      setError(null);
-      await taskService.createTask(taskData, token);
-      setTaskSuccess("Task created successfully!"); // Success message on task creation
-      await getUserTasks(); // Refresh tasks
-    } catch (error) {
-      setError("Failed to create task.");
-      console.error("Create task error:", error);
-    }
-  };
+  // Mutation: Create Task
+  const createTaskMutation = useMutation({
+    mutationFn: async ({
+      taskData,
+      token,
+    }: {
+      taskData: Task;
+      token: string;
+    }) => taskService.createTask(taskData, token),
+    onSuccess: () => {
+      setTaskSuccess("Task created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, filter] });
+    },
+    onError: () => setTaskSuccess("Failed to create task."),
+  });
 
-  // Update a task
-  const updateTask = async (
-    token: string,
-    taskId: string,
-    taskData: Partial<Task>
-  ) => {
-    try {
-      setError(null);
-      await taskService.updateTask(token, taskId, taskData);
-      setTaskSuccess("Task updated successfully!"); // Success message on task update
-      await getUserTasks(); // Refresh tasks
-    } catch (error) {
-      setError("Failed to update task.");
-      console.error("Update task error:", error);
-    }
-  };
+  // Mutation: Update Task
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({
+      token,
+      taskId,
+      taskData,
+    }: {
+      token: string;
+      taskId: string;
+      taskData: Partial<Task>;
+    }) => taskService.updateTask(token, taskId, taskData),
+    onSuccess: () => {
+      setTaskSuccess("Task updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, filter] });
+    },
+    onError: () => setTaskSuccess("Failed to update task."),
+  });
 
-  // Delete a task
-  const deleteTask = async (taskId: string, userId: string, token: string) => {
-    try {
-      setError(null);
-      await taskService.deleteTask(taskId, userId, token);
-      setTaskSuccess("Task deleted successfully!"); // Success message on task deletion
-      await getUserTasks(); // Refresh tasks
-    } catch (error) {
-      setError("Failed to delete task.");
-      console.error("Delete task error:", error);
-    }
-  };
+  // Mutation: Delete Task
+  const deleteTaskMutation = useMutation({
+    mutationFn: async ({
+      taskId,
+      userId,
+      token,
+    }: {
+      taskId: string;
+      userId: string;
+      token: string;
+    }) => taskService.deleteTask(taskId, userId, token),
+    onSuccess: () => {
+      setTaskSuccess("Task deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["tasks", user?.id, filter] });
+    },
+    onError: () => setTaskSuccess("Failed to delete task."),
+  });
 
-  const resetError = () => setError(null);
-  const resetSuccess = () => setTaskSuccess(null); // Reset success message
+  // Reset functions
+  const resetError = () => setTaskSuccess(null);
+  const resetSuccess = () => setTaskSuccess(null);
+  const resetEditTask = () => setEditTask(false);
+  const resetCurrentTask = () => setCurrentTask(undefined); // Reset current task to null
 
   return (
     <TaskContext.Provider
       value={{
         tasks,
-        loading,
-        taskSuccess, // Provide the success message
-        getUserTasks,
-        createTask,
-        updateTask,
-        deleteTask,
-        error,
+        isLoading,
+        taskSuccess,
+        editTask,
+        currentTask,
+        createTask: (taskData, token) =>
+          createTaskMutation.mutate({ taskData, token }),
+        updateTask: (token, taskId, taskData) =>
+          updateTaskMutation.mutate({ token, taskId, taskData }),
+        deleteTask: (taskId, userId, token) =>
+          deleteTaskMutation.mutate({ taskId, userId, token }),
+        error: error ? "Failed to fetch tasks." : null,
         resetError,
         resetSuccess,
+        resetEditTask,
+        setCurrentTask, // Function to set the current task
+        resetCurrentTask, // Function to reset the current task
+        setEditTask,
       }}
     >
       {children}

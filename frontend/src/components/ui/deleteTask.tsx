@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTasks } from "../../context/TaskContext";
-
+import { useEffect } from "react";
 const DeleteModal = ({
   token,
   userId,
@@ -12,17 +12,27 @@ const DeleteModal = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { deleteTask, resetError, resetSuccess } = useTasks();
+  const {
+    deleteTask,
+    resetError,
+    resetSuccess,
+    resetCurrentTask,
+    resetEditTask,
+  } = useTasks();
+
+  useEffect(() => {
+    resetSuccess();
+    resetError();
+  });
 
   const handleDelete = async () => {
     setLoading(true);
     try {
       if (token && userId && taskId) {
-        await deleteTask(taskId, userId, token);
+        deleteTask(taskId, userId, token);
       }
-      console.log("Task deleted successfully");
-      resetError();
-      resetSuccess();
+      resetCurrentTask();
+      resetEditTask();
       setIsOpen(false);
     } catch (error) {
       console.error("Error deleting task:", error);

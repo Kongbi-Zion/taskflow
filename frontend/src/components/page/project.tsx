@@ -6,7 +6,6 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-import Task from "../ui/task";
 import { useTasks } from "@/context/TaskContext";
 import LazyLoader from "../ui/lazyloader";
 import { Task as taskType } from "@/lib/types";
@@ -23,14 +22,12 @@ interface Columns {
 }
 
 const ProjectComponent: React.FC = () => {
-  const { getUserTasks, loading, tasks } = useTasks();
-  const [updateTask, setUpdateTask] = useState(false);
-  const [currentTask, setCurretTask] = useState<taskType>();
+  const { isLoading, tasks, setCurrentTask, setEditTask } = useTasks();
   const [columns, setColumns] = useState<Columns>({});
 
-  useEffect(() => {
-    getUserTasks();
-  }, []);
+  // useEffect(() => {
+  //   getUserTasks();
+  // }, []);
 
   useEffect(() => {
     // Initialize the columns with default categories
@@ -107,7 +104,7 @@ const ProjectComponent: React.FC = () => {
 
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <LazyLoader />
       ) : (
         <div className="w-full h-screen pb-32 overflow-hidden">
@@ -156,8 +153,8 @@ const ProjectComponent: React.FC = () => {
                                     <div className="w-4/12 max-w-full px-3 text-right flex-0">
                                       <div
                                         onClick={() => {
-                                          setUpdateTask(true);
-                                          setCurretTask(item.task);
+                                          setEditTask(true);
+                                          setCurrentTask(item.task);
                                         }}
                                         className="inline-flex cursor-pointer w-12 h-12 text-center text-white items-center justify-center rounded-lg bg-gradient-to-tl from-primary-shade-700 to-primary-shade-500 shadow-soft-2xl"
                                       >
@@ -187,14 +184,6 @@ const ProjectComponent: React.FC = () => {
               ))}
             </div>
           </DragDropContext>
-
-          {updateTask && (
-            <Task
-              closeModal={() => setUpdateTask(false)}
-              edit={true}
-              currentTask={currentTask}
-            />
-          )}
         </div>
       )}
     </>

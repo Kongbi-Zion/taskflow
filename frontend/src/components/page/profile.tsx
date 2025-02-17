@@ -16,7 +16,7 @@ const ProfileComponent: React.FC = () => {
   useEffect(() => {
     if (user?.email && user?.token && user?.username)
       setCurrentUser({
-        id: user.id,
+        id: user.id as string,
         username: user.username,
         email: user.email,
         token: user?.token,
