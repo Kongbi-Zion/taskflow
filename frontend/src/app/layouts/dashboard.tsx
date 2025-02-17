@@ -8,8 +8,9 @@ import Task from "../../components/ui/task";
 import { usePathname } from "next/navigation";
 import NaveItems from "../../components/ui/navitmes";
 import { useTasks } from "@/context/TaskContext";
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { editTask, currentTask } = useTasks();
+  const { editTask, currentTask, resetCurrentTask, resetEditTask } = useTasks();
   const pathname = usePathname();
   const [newProject, setNewProject] = useState(false);
   const [newTask, setTask] = useState(false);
@@ -22,6 +23,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
   };
   const handleCloseModal = () => {
+    resetCurrentTask();
+    resetEditTask();
     setNewProject(false);
     setTask(false);
   };
@@ -208,4 +211,4 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default React.memo(DashboardLayout);

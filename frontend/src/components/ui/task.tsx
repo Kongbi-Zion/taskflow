@@ -46,7 +46,7 @@ const Task: React.FC<NewTaskProps> = ({
   }, [currentTask]);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -81,12 +81,14 @@ const Task: React.FC<NewTaskProps> = ({
 
       if (title && description && dueDate && userId && token) {
         if (!edit) {
-          await createTask({ title, description, dueDate, userId }, token);
+          createTask({ title, description, dueDate, userId }, token);
         }
 
         const taskId = currentTask?._id;
+
         if (edit && status && taskId) {
-          await updateTask(token, taskId, {
+          console.log("status", status);
+          updateTask(token, taskId, {
             title,
             description,
             dueDate,
@@ -215,7 +217,7 @@ const Task: React.FC<NewTaskProps> = ({
                   id="status"
                   name="status"
                   value={formData.status}
-                  onChange={() => handleChange}
+                  onChange={handleChange}
                   className="text-gray-800 dark:text-gray-300 bg-secondry-background dark:bg-secondry-background-dark outline-none border border-gray-400 w-full text-sm pl-4 pr-10 py-2.5 rounded-md"
                 >
                   <option value="to-do">To Do</option>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, memo } from "react";
 import AuthLayout from "@/app/layouts/auth";
 import Link from "next/link";
 import { FormFields } from "@/lib/types";
@@ -39,7 +39,6 @@ const SignInComponent: React.FC = () => {
     } catch (error) {
       console.log("error:", error);
     }
-
     setLoading(false);
   };
 
@@ -96,29 +95,7 @@ const SignInComponent: React.FC = () => {
                   className="absolute right-3 top-2.5 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="m15.446 12.646l-.796-.796q.225-1.31-.742-2.267T11.65 8.85l-.796-.796q.252-.104.526-.156t.62-.052q1.529 0 2.591 1.063t1.063 2.591q0 .346-.052.64q-.052.293-.156.506m3.162 3.073l-.758-.669q.95-.725 1.688-1.588T20.8 11.5q-1.25-2.525-3.588-4.012T12 6q-.725 0-1.425.1T9.2 6.4l-.78-.78q.87-.33 1.772-.475T12 5q3.256 0 5.956 1.79q2.7 1.789 3.967 4.71q-.536 1.206-1.358 2.266t-1.957 1.953m1.115 5.42l-3.892-3.881q-.664.294-1.647.518Q13.2 18 12 18q-3.275 0-5.956-1.79q-2.68-1.789-3.967-4.71q.583-1.325 1.537-2.482q.953-1.157 2.036-1.941l-2.789-2.8l.708-.708l16.862 16.862zM6.358 7.785q-.86.611-1.758 1.607q-.898.997-1.4 2.108q1.25 2.525 3.587 4.013T12 17q.865 0 1.744-.168t1.322-.34l-1.632-1.642q-.236.133-.659.218t-.775.086q-1.529 0-2.591-1.063T8.346 11.5q0-.333.086-.746t.218-.688zm4.354 4.354"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M12.005 15.154q1.524 0 2.586-1.067t1.063-2.591t-1.067-2.587t-2.591-1.063t-2.587 1.067t-1.063 2.592t1.067 2.586t2.592 1.063M12 14.2q-1.125 0-1.912-.787T9.3 11.5t.788-1.912T12 8.8t1.913.788t.787 1.912t-.787 1.913T12 14.2m.003 3.8q-3.25 0-5.922-1.768T2.077 11.5q1.33-2.964 4.001-4.732T11.998 5t5.921 1.768t4.004 4.732q-1.33 2.964-4.001 4.732T12.002 18M12 17q2.825 0 5.188-1.487T20.8 11.5q-1.25-2.525-3.613-4.012T12 6T6.813 7.488T3.2 11.5q1.25 2.525 3.613 4.013T12 17"
-                      />
-                    </svg>
-                  )}
+                  {showPassword ? "🙈" : "👁"}
                 </button>
               )}
             </div>
@@ -155,4 +132,5 @@ const SignInComponent: React.FC = () => {
     </AuthLayout>
   );
 };
-export default SignInComponent;
+
+export default memo(SignInComponent);

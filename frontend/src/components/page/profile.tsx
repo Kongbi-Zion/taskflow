@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import DefaultLoader from "../ui/loader";
+
 const ProfileComponent: React.FC = () => {
   const { user, error, updateUser } = useAuth();
   const [currentUser, setCurrentUser] = useState({
@@ -108,4 +109,4 @@ const ProfileComponent: React.FC = () => {
   );
 };
 
-export default ProfileComponent;
+export default memo(ProfileComponent);

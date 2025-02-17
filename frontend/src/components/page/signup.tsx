@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, memo } from "react";
 import AuthLayout from "@/app/layouts/auth";
 import { validate } from "@/lib/constants";
 import { FormFields } from "@/lib/types";
@@ -138,16 +138,11 @@ const SignUpComponent: React.FC = () => {
           onClick={(e) => handleSubmit(e)}
           className="w-full py-2.5 px-4 flex justify-center tracking-wider text-sm rounded-md text-white bg-primary-shade-700 hover:bg-primary-shade-800 focus:outline-none"
         >
-          {loading ? (
-            <span className="inline-flex gap-2">
-              <DefaultLoader height="1.2rem" /> Please wait...
-            </span>
-          ) : (
-            <span>{props.subTitle}</span>
-          )}
+          {loading ? <DefaultLoader height="1.2rem" /> : props.subTitle}
         </button>
       </div>
     </AuthLayout>
   );
 };
-export default SignUpComponent;
+
+export default memo(SignUpComponent);

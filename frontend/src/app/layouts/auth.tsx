@@ -3,6 +3,7 @@ import ThemeToggle from "../../components/ui/ThemeToggle";
 import Link from "next/link";
 import { AuthLayoutProps } from "@/lib/types";
 import { useAuth } from "@/context/AuthContext";
+
 const AuthLayout: React.FC<AuthLayoutProps> = ({
   title,
   subTitle,
@@ -66,4 +67,4 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   );
 };
 
-export default AuthLayout;
+export default React.memo(AuthLayout);
