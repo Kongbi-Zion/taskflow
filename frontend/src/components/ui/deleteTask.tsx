@@ -1,3 +1,4 @@
+"use cleint"
 import { useState } from "react";
 import { useTasks } from "../../context/TaskContext";
 import { useEffect } from "react";

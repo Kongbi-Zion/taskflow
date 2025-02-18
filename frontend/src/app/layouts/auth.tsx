@@ -1,3 +1,4 @@
+"use cleint";
 import React, { useEffect, useState } from "react";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import Link from "next/link";
