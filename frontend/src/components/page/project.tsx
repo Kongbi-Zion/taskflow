@@ -7,7 +7,6 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import { useTasks } from "@/context/TaskContext";
-import LazyLoader from "../ui/lazyloader";
 import moment from "moment";
 
 const ProjectComponent: React.FC = () => {

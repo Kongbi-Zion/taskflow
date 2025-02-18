@@ -13,18 +13,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Task } from "@/lib/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-interface Item {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  task: Task;
-}
-
-interface Columns {
-  [key: string]: Item[];
-}
-
 interface TaskContextType {
   tasks: Task[];
   isLoading: boolean;
@@ -92,48 +80,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     },
     enabled: !!user && !!filter,
   });
-
-  useEffect(() => {
-    // Initialize the columns with default categories
-    const defaultCategories = ["to-do", "in-progress", "completed"];
-
-    // Map tasks into categories based on their status
-    const categorisedTasks = tasks.reduce((acc: Columns, task: Task) => {
-      // Define the category based on task status (e.g., 'to-do', 'in-progress', 'completed')
-      const category = task.status || "to-do"; // Default to 'to-do' if no status is provided
-
-      // Ensure the category exists in the accumulator
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-
-      // Push the task into the respective category
-      acc[category].push({
-        id: `${task?._id}`,
-        title: task.title,
-        description: task.description,
-        dueDate: task.dueDate as string,
-        task,
-      });
-
-      return acc;
-    }, {});
-
-    // Ensure all default categories exist even if no tasks are assigned to them
-    defaultCategories.forEach((category) => {
-      if (!categorisedTasks[category]) {
-        categorisedTasks[category] = [];
-      }
-    });
-
-    // Update state with categorised tasks, ensuring the order of categories remains as per defaultCategories
-    const orderedCategorisedTasks: Columns = {};
-    defaultCategories.forEach((category) => {
-      orderedCategorisedTasks[category] = categorisedTasks[category] || [];
-    });
-
-    setColumns(orderedCategorisedTasks);
-  }, [tasks]);
 
   const createTaskMutation = useMutation({
     mutationFn: async ({

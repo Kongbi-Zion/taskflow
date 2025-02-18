@@ -38,11 +38,6 @@ class TaskController {
         .sort({ dueDate: 1 })
         .select("id title description dueDate users status");
 
-      if (!tasks.length) {
-        res.status(404).json({ message: "No tasks found for this filter" });
-        return;
-      }
-
       res.json({ message: "Tasks retrieved successfully", tasks });
     } catch (error) {
       res.status(500).json({ message: "Error retrieving tasks", error });
@@ -117,7 +112,7 @@ class TaskController {
   public static async updateTask(req: Request, res: Response): Promise<void> {
     try {
       const taskId = req.params.id;
-      const { title, description, users, userId } = req.body;
+      const { title, description, users, userId, status, dueDate } = req.body;
 
       // Step 1: Find the task by ID
       const task = await Task.findById(taskId);
@@ -144,7 +139,7 @@ class TaskController {
       // Step 4: Update the task if validation passes
       const updatedTask = await Task.findByIdAndUpdate(
         taskId,
-        { $set: { title, description, users } },
+        { $set: { title, description, users, status, dueDate } },
         { new: true }
       );
 
