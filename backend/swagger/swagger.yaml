@@ -4,7 +4,7 @@ info:
   description: API for managing users and tasks
   version: 1.0.0
 servers:
-  - url: http://localhost:5000
+  - url: https://task-flow-ovf1.onrender.com
     description: Local server
 paths:
   /api/users:
