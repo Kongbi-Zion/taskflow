@@ -1,11 +1,8 @@
 import axios from "axios";
+import { User } from "../types";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
-interface User {
-  username: string;
-  email: string;
-  password: string;
-}
+console.log(API);
 
 // Sign-in function
 const signIn = async (email: string, password: string) => {

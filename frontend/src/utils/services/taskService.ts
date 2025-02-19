@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Task } from "../types";
 const API = process.env.NEXT_PUBLIC_API_URL;
-
+console.log(API);
 // Get tasks based on filter (all, today, tomorrow, upcoming)
 const getUserTasks = async (userId: string, filter: string, token: string) => {
   const response = await axios.get(`${API}/api/tasks/${filter}/${userId}`, {
