@@ -4,6 +4,7 @@ import { User } from "../types";
 import { API } from "@/utils/constants";
 // Sign-in function
 const signIn = async (email: string, password: string) => {
+  console.log("API: ", API);
   const response = await axios.post(`${API}/auth/signin`, { email, password });
   return response.data;
 };
