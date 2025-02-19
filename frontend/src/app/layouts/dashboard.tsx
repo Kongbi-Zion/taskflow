@@ -53,7 +53,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <main className="h-screen w-full text-black relative">
+    <main className="h-screen w-full text-black dark:text-gray-100 relative">
       <div className="w-full h-full md:flex bg-white dark:bg-dark-background transition-all ease-in-out duration-700">
         <div
           className={`bg-secondry-background overflow-hidden h-full dark:bg-secondry-background-dark p-5 transition-all ease-in-out duration-700 ${
