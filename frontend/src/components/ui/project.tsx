@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { FormFields } from "@/lib/types";
+import { FormFields } from "@/utils/types";
 import DefaultLoader from "./loader";
 
 interface NewProjectProps {

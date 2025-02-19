@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { FormFields } from "@/lib/types";
+import { FormFields } from "@/utils/types";
 import DefaultLoader from "./loader";
 import { useTasks } from "@/context/TaskContext";
 import { useAuth } from "@/context/AuthContext";
-import { Task as taskType } from "@/lib/types/index";
+import { Task as taskType } from "@/utils/types/index";
 import DeleteModal from "./deleteTask";
 interface NewTaskProps {
   closeModal: () => void;
@@ -37,13 +37,15 @@ const Task: React.FC<NewTaskProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setFormData({
-      title: currentTask?.title,
-      description: currentTask?.description,
-      dueDate: currentTask?.dueDate?.slice(0, 10),
-      status: currentTask?.status,
-    });
-  }, [currentTask]);
+    if (edit && currentTask) {
+      setFormData({
+        title: currentTask?.title,
+        description: currentTask?.description,
+        dueDate: currentTask?.dueDate?.slice(0, 10),
+        status: currentTask?.status,
+      });
+    }
+  }, [currentTask, edit]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

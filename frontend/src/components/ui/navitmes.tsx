@@ -51,12 +51,12 @@ const NaveItems: React.FC = () => {
       {pathname !== "/" && (
         <button
           onClick={downloadCSV}
-          className="bg-primary-shade-500 text-sm text-white hover:bg-primary-shade-600 font-bold p-2 rounded inline-flex items-center"
+          className="bg-primary-shade-500 text-sm text-white hover:bg-primary-shade-600 font-bold p-2 sm:px-4 rounded inline-flex items-center"
           disabled={loading} // Disable button when loading
         >
           {loading ? (
             <svg
-              className="animate-spin w-4 h-4 mr-1"
+              className="animate-spin w-3 h-3 mr-1"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -84,7 +84,13 @@ const NaveItems: React.FC = () => {
               <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
             </svg>
           )}
-          <span>{loading ? "Downloading..." : "Download"}</span>
+          <span>
+            {loading ? (
+              "Downloading..."
+            ) : (
+              <span className="hidden sm:block">Download</span>
+            )}
+          </span>
         </button>
       )}
 

@@ -1,16 +1,10 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  useEffect,
-} from "react";
-import taskService from "@/lib/services/taskService";
+import React, { createContext, useContext, ReactNode, useState } from "react";
+import taskService from "@/utils/services/taskService";
 import { useAuth } from "./AuthContext";
-import { useParams, useRouter } from "next/navigation";
-import { Task } from "@/lib/types";
+import { useRouter, useParams } from "next/navigation";
+import { Columns, Task } from "@/utils/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface TaskContextType {
@@ -40,9 +34,9 @@ interface TaskProviderProps {
 }
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
-  const params = useParams();
   const router = useRouter();
-  const filter = params.productId as "all" | "today" | "tomorrow" | "upcoming";
+  const params = useParams();
+  const filter = params.productId as string;
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -69,6 +63,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
           filter,
           user.token
         );
+
         return data.tasks;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {

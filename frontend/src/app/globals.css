@@ -15,6 +15,16 @@
   }
 }
 
+/* Hide scrollbars on a specific class */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari, Chrome, Edge */
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DashboardLayoutProps } from "@/lib/types";
+import { DashboardLayoutProps } from "@/utils/types";
 import Link from "next/link";
 import AddFloatingButtonWithModal from "../../components/ui/floatingbutton";
 import NewProject from "../../components/ui/project";
@@ -151,7 +151,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <div className="px-3 py-4 h-fit">
             <div className="flex justify-between items-center gap-3 text-gray-300">
               <h3 className="text-gray-800 dark:text-gray-300 text-xl font-bold">
-                Projects
+                Tasks
               </h3>
             </div>
             <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">

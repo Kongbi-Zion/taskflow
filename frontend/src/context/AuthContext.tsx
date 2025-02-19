@@ -8,10 +8,10 @@ import React, {
   useEffect,
 } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import authService from "@/lib/services/authService";
+import authService from "@/utils/services/authService";
 import LazyLoader from "../components/ui/lazyloader";
 import { useRouter } from "next/navigation";
-import { User } from "@/lib/types";
+import { User } from "@/utils/types";
 interface AuthContextType {
   user: User | null;
   signIn: (email: string, password: string) => void;
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("taskflowuser");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }) => authService.signIn(email, password),
     onSuccess: (data) => {
       setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("taskflowuser", JSON.stringify(data.user));
       router.push("/");
     },
     onError: () => {
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     mutationFn: async (userData: User) => authService.signUp(userData),
     onSuccess: (data) => {
       setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("taskflowuser", JSON.stringify(data.user));
       router.push("/signin");
     },
     onError: () => {
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Sign Out
   const handleSignOut = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("taskflowuser");
     queryClient.clear();
     router.push("/signin");
   };
@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }) => authService.updateUser(token, username, id),
     onSuccess: (data) => {
       setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("taskflowuser", JSON.stringify(data.user));
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {

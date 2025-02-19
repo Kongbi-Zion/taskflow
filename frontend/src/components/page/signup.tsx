@@ -2,8 +2,8 @@
 
 import { useState, ChangeEvent, FormEvent, memo } from "react";
 import AuthLayout from "@/app/layouts/auth";
-import { validate } from "@/lib/constants";
-import { FormFields } from "@/lib/types";
+import { validate } from "@/utils/constants";
+import { FormFields } from "@/utils/types";
 import DefaultLoader from "../ui/loader";
 import { useAuth } from "@/context/AuthContext";
 

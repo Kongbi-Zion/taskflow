@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { useTasks } from "@/context/TaskContext";
 interface CreateNewProjectOrTaskProps {
   onCreate: (type: string) => void;
   disabled: boolean;
@@ -12,9 +12,11 @@ const AddFloatingButtonWithModal: React.FC<CreateNewProjectOrTaskProps> = ({
   disabled,
 }) => {
   const [showModal, setShowModal] = useState(false);
-
+  const { resetError, resetSuccess } = useTasks();
   const handleClick = () => {
-    setShowModal(!showModal); // Toggle modal visibility
+    resetSuccess();
+    resetError();
+    setShowModal(!showModal);
   };
 
   const handleNewProject = () => {
@@ -23,7 +25,7 @@ const AddFloatingButtonWithModal: React.FC<CreateNewProjectOrTaskProps> = ({
   };
 
   const handleNewTask = () => {
-    onCreate("New Task"); // Call the function passed from the main page
+    onCreate("New Task");
     setShowModal(false); // Close modal after selection
   };
 

@@ -48,6 +48,7 @@ TaskFlow is a robust task management web application designed to enhance product
 2. Create a `.env` file in both backend and frontend directories with required variables.
 3. Start the application using Docker:
    ```bash
+   docker-compose up --build
    docker-compose --env-file ./backend/.env up --build
    ```
 4. Access the application at `http://localhost:3000`.
@@ -171,7 +172,7 @@ TaskFlow is a robust task management web application designed to enhance product
    ```
 2. **Deploy with Docker Compose:**
    ```bash
-   docker-compose -f docker-compose.prod.yml up -d
+   docker-compose -f docker-compose.yml up -d
    ```
 3. **Environment Variables:**
    - Configure production environment variables (database credentials, JWT secrets, etc.).

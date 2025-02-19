@@ -3,11 +3,7 @@ import { Task } from "../types";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 // Get tasks based on filter (all, today, tomorrow, upcoming)
-const getUserTasks = async (
-  userId: string,
-  filter: "all" | "today" | "tomorrow" | "upcoming",
-  token: string
-) => {
+const getUserTasks = async (userId: string, filter: string, token: string) => {
   const response = await axios.get(`${API}/tasks/${filter}/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

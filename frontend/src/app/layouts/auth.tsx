@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ThemeToggle from "../../components/ui/ThemeToggle";
 import Link from "next/link";
-import { AuthLayoutProps } from "@/lib/types";
+import { AuthLayoutProps } from "@/utils/types";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 

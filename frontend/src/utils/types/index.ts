@@ -58,3 +58,15 @@ export interface User {
   email: string;
   password: string;
 }
+
+export interface Item {
+  _id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  task: Task;
+}
+
+export interface Columns {
+  [key: string]: Item[];
+}

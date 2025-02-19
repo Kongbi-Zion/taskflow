@@ -1,4 +1,3 @@
-"use client";
 import dynamic from "next/dynamic";
 import DashboardLayout from "../layouts/dashboard";
 import LazyLoader from "../../components/ui/lazyloader";
