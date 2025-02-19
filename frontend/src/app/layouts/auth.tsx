@@ -35,7 +35,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   }
 
   return (
-    <div className="w-full h-full bg-background dark:bg-dark-background">
+    <div className="w-full h-full text-black bg-background dark:bg-dark-background">
       <div className="max-w-4xl flex items-center mx-auto md:h-screen p-4">
         <div className="grid md:grid-cols-3 items-center shadow-md rounded-xl overflow-hidden w-full">
           <div className="max-md:order-1 flex flex-col pt-16 md:space-y-16 space-y-8 max-md:mt-16 min-h-full bg-gradient-to-r from-primary-shade-900 to-primary-shade-700 lg:px-8 px-4 py-4">

@@ -48,7 +48,7 @@ const NaveItems: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      {pathname !== "/" && (
+      {pathname !== "/" && pathname !== "/profile" && (
         <button
           onClick={downloadCSV}
           className="bg-primary-shade-500 text-sm text-white hover:bg-primary-shade-600 font-bold p-2 sm:px-4 rounded inline-flex items-center"
