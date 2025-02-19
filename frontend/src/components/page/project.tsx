@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -75,42 +75,44 @@ const ProjectComponent: React.FC = () => {
     }
   };
 
-  const handleTaskChange = (updatedTasks: Task[]) => {
-    const defaultCategories = ["to-do", "in-progress", "completed"];
+  const handleTaskChange = useCallback(
+    (updatedTasks: Task[]) => {
+      const defaultCategories = ["to-do", "in-progress", "completed"];
 
-    // Create an object with default categories initialized
-    const categorisedTasks: Columns = Object.fromEntries(
-      defaultCategories.map((category) => [category, []])
-    );
-
-    // Filter tasks based on the search term (in title or description)
-    const filteredTasks = updatedTasks.filter((task) => {
-      const searchTermLower = searchTerm.toLowerCase();
-      return (
-        task.title.toLowerCase().includes(searchTermLower) ||
-        task.description.toLowerCase().includes(searchTermLower)
+      // Create an object with default categories initialized
+      const categorisedTasks: Columns = Object.fromEntries(
+        defaultCategories.map((category) => [category, []])
       );
-    });
 
-    // Populate categories with filtered tasks
-    filteredTasks.forEach((task) => {
-      const category = task.status || "to-do"; // Default to 'to-do'
-      categorisedTasks[category] = categorisedTasks[category] || [];
-      categorisedTasks[category].push({
-        _id: task._id as string,
-        title: task.title,
-        description: task.description,
-        dueDate: task.dueDate as string,
-        task,
+      // Filter tasks based on the search term (in title or description)
+      const searchTermLower = searchTerm.toLowerCase();
+      const filteredTasks = updatedTasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchTermLower) ||
+          task.description.toLowerCase().includes(searchTermLower)
+      );
+
+      // Populate categories with filtered tasks
+      filteredTasks.forEach((task) => {
+        const category = task.status || "to-do"; // Default to 'to-do'
+        categorisedTasks[category] = categorisedTasks[category] || [];
+        categorisedTasks[category].push({
+          _id: task._id as string,
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate as string,
+          task,
+        });
       });
-    });
 
-    setColumns(categorisedTasks);
-  };
+      setColumns(categorisedTasks);
+    },
+    [searchTerm, setColumns]
+  );
 
   useEffect(() => {
     handleTaskChange(tasks);
-  }, [tasks, searchTerm]);
+  }, [tasks, handleTaskChange]);
 
   const formatDueDate = (dueDate: string | null) => {
     return dueDate
