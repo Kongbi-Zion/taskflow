@@ -2,10 +2,9 @@ import axios from "axios";
 import { User } from "../types";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
-console.log(API);
-
 // Sign-in function
 const signIn = async (email: string, password: string) => {
+  console.log("API", API);
   const response = await axios.post(`${API}/api/auth/signin`, {
     email,
     password,
