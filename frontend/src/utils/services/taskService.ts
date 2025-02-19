@@ -4,7 +4,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 
 // Get tasks based on filter (all, today, tomorrow, upcoming)
 const getUserTasks = async (userId: string, filter: string, token: string) => {
-  const response = await axios.get(`${API}/tasks/${filter}/${userId}`, {
+  const response = await axios.get(`${API}/api/tasks/${filter}/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -12,13 +12,13 @@ const getUserTasks = async (userId: string, filter: string, token: string) => {
 
 // Get tasks by project
 const getTasksByProject = async (projectId: string) => {
-  const response = await axios.get(`${API}/tasks/project/${projectId}`);
+  const response = await axios.get(`${API}/api/tasks/project/${projectId}`);
   return response.data;
 };
 
 // Create a new task
 const createTask = async (taskData: Task, token: string) => {
-  const response = await axios.post(`${API}/tasks/create`, taskData, {
+  const response = await axios.post(`${API}/api/tasks/create`, taskData, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -30,7 +30,7 @@ const updateTask = async (
   taskId: string,
   taskData: Partial<Task>
 ) => {
-  const response = await axios.put(`${API}/tasks/${taskId}`, taskData, {
+  const response = await axios.put(`${API}/api/tasks/${taskId}`, taskData, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -38,7 +38,7 @@ const updateTask = async (
 
 // Delete a task
 const deleteTask = async (taskId: string, userId: string, token: string) => {
-  const response = await axios.delete(`${API}/tasks/${userId}/${taskId}`, {
+  const response = await axios.delete(`${API}/api/tasks/${userId}/${taskId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;

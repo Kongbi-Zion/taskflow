@@ -9,20 +9,25 @@ interface User {
 
 // Sign-in function
 const signIn = async (email: string, password: string) => {
-  const response = await axios.post(`${API}/auth/signin`, { email, password });
+  const response = await axios.post(`${API}/api/auth/signin`, {
+    email,
+    password,
+  });
   return response.data;
 };
 
 // Sign-up function
 const signUp = async (userData: User) => {
-  const response = await axios.post(`${API}/auth/signup`, userData);
+  const response = await axios.post(`${API}/api/auth/signup`, userData);
   console.log("response: ", response);
   return response.data;
 };
 
 // Forgot password function
 const forgotPassword = async (email: string) => {
-  const response = await axios.post(`${API}/auth/forgot-password`, { email });
+  const response = await axios.post(`${API}/api/auth/forgot-password`, {
+    email,
+  });
   return response.data;
 };
 
@@ -32,7 +37,7 @@ const resetPassword = async (
   newPassword: string,
   email: string
 ) => {
-  const response = await axios.post(`${API}/auth/reset-password`, {
+  const response = await axios.post(`${API}/api/auth/reset-password`, {
     resetCode: token,
     newPassword,
     email,
@@ -43,7 +48,7 @@ const resetPassword = async (
 // Update user function
 const updateUser = async (token: string, username: string, id: string) => {
   const response = await axios.put(
-    `${API}/auth/user/update`,
+    `${API}/api/auth/user/update`,
     { id, username },
     {
       headers: {
